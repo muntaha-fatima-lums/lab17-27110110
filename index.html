@@ -70,16 +70,18 @@
         <label>Phone number <input type="tel" id="phone" placeholder="03001234567"></label>
         <label>Item
           <select id="item">
-            <option value="chocolate fudge cake">Chocolate fudge cake, Rs 2,400</option>
-            <option value="strawberry cream cake">Strawberry cream cake, Rs 2,200</option>
-            <option value="carrot walnut cake">Carrot walnut cake, Rs 1,950</option>
-            <option value="sourdough loaf">Sourdough loaf, Rs 850</option>
-            <option value="butter croissants">Butter croissants (4), Rs 1,100</option>
-            <option value="garlic baguette">Garlic baguette, Rs 650</option>
-            <option value="chocolate chip cookies">Chocolate chip cookies (6), Rs 750</option>
-            <option value="peanut butter cookies">Peanut butter cookies (6), Rs 700</option>
+            <option value="chocolate fudge cake" data-price="2400">Chocolate fudge cake, Rs 2,400</option>
+            <option value="strawberry cream cake" data-price="2200">Strawberry cream cake, Rs 2,200</option>
+            <option value="carrot walnut cake" data-price="1950">Carrot walnut cake, Rs 1,950</option>
+            <option value="sourdough loaf" data-price="850">Sourdough loaf, Rs 850</option>
+            <option value="butter croissants" data-price="1100">Butter croissants (4), Rs 1,100</option>
+            <option value="garlic baguette" data-price="650">Garlic baguette, Rs 650</option>
+            <option value="chocolate chip cookies" data-price="750">Chocolate chip cookies (6), Rs 750</option>
+            <option value="peanut butter cookies" data-price="700">Peanut butter cookies (6), Rs 700</option>
           </select>
         </label>
+        <label>Quantity <input type="number" id="quantity" min="1" step="1" value="1" required></label>
+        <p id="orderTotal" aria-live="polite">Order total: Rs 2,400</p>
         <label>Pickup date <input type="date" id="date"></label>
         <div class="error" id="error"></div>
         <button type="submit" class="btn">Place order</button>
@@ -94,14 +96,34 @@
     const form = document.getElementById("orderForm");
     const error = document.getElementById("error");
     const thanks = document.getElementById("thanks");
+    const itemSelect = document.getElementById("item");
+    const quantityInput = document.getElementById("quantity");
+    const orderTotal = document.getElementById("orderTotal");
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function updateOrderTotal() {
+      const quantity = Number(quantityInput.value);
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        orderTotal.textContent = "Please enter a quantity of 1 or more.";
+        return;
+      }
+
+      const unitPrice = Number(itemSelect.selectedOptions[0].dataset.price);
+      orderTotal.textContent = "Order total: Rs " + (unitPrice * quantity).toLocaleString("en-US");
+    }
+
+    itemSelect.addEventListener("change", updateOrderTotal);
+    quantityInput.addEventListener("input", updateOrderTotal);
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const name = document.getElementById("name").value.trim();
       const phone = document.getElementById("phone").value.replace(/[\s-]/g, "");
-      const item = document.getElementById("item").value;
+      const item = itemSelect.value;
+      const quantity = Number(quantityInput.value);
+      const unitPrice = Number(itemSelect.selectedOptions[0].dataset.price);
+      const total = unitPrice * quantity;
       const date = document.getElementById("date").value;
       thanks.hidden = true;
 
@@ -113,15 +135,20 @@
         error.textContent = "Your phone number needs 11 digits starting with 03, like 03001234567.";
         return;
       }
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        error.textContent = "Please enter a quantity of 1 or more.";
+        return;
+      }
 
       const [y, m, d] = date.split("-").map(Number);
       const pickup = new Date(y, m - 1, d);
       const niceDate = days[pickup.getDay()] + ", " + d + " " + months[m - 1] + " " + y;
 
       error.textContent = "";
-      thanks.textContent = "Thank you, " + name + ". Your " + item + " will be ready for pickup on " + niceDate + " from 10:00 am. We'll call you on " + phone + " to confirm.";
+      thanks.textContent = "Thank you, " + name + ". Your order for " + quantity + " × " + item + " will be ready for pickup on " + niceDate + " from 10:00 am. The total is Rs " + total.toLocaleString("en-US") + ". We'll call you on " + phone + " to confirm.";
       thanks.hidden = false;
       form.reset();
+      updateOrderTotal();
     });
   </script>
 </body>
