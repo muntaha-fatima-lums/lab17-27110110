@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crumb &amp; Co. | Home bakery in Lahore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <a class="brand" href="index.html">Crumb &amp; Co.</a>
+        <div class="tagline">Baked fresh in Lahore, every morning.</div>
+      </div>
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+  <div class="special">
+    Today's special: Chocolate fudge cake — Rs 2,400. Rich layers with dark chocolate ganache.
+  </div>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Crumb &amp; Co.</h1>
+      <p>Baked fresh in Lahore, every morning. Cakes, breads and cookies from our home kitchen, ready for pickup.</p>
+      <a class="btn" href="#order">Place an order</a>
+    </section>
+
+    <section id="menu">
+      <h2>Our menu</h2>
+
+      <h3 class="category">Cakes</h3>
+      <div class="grid">
+        <div class="card"><div class="emoji">🎂</div><h4>Chocolate fudge cake</h4><p>Rich layers with dark chocolate ganache.</p><span class="price">Rs 2,400</span></div>
+        <div class="card"><div class="emoji">🍰</div><h4>Strawberry cream cake</h4><p>Light sponge with fresh cream and berries.</p><span class="price">Rs 2,200</span></div>
+        <div class="card"><div class="emoji">🥕</div><h4>Carrot walnut cake</h4><p>Spiced, moist and topped with cream cheese.</p><span class="price">Rs 1,950</span></div>
+      </div>
+
+      <h3 class="category">Breads</h3>
+      <div class="grid">
+        <div class="card"><div class="emoji">🍞</div><h4>Sourdough loaf</h4><p>Crusty outside, soft and chewy inside.</p><span class="price">Rs 850</span></div>
+        <div class="card"><div class="emoji">🥐</div><h4>Butter croissants (4)</h4><p>Flaky, golden and baked at dawn.</p><span class="price">Rs 1,100</span></div>
+        <div class="card"><div class="emoji">🥖</div><h4>Garlic baguette</h4><p>Herb butter baked right into the crust.</p><span class="price">Rs 650</span></div>
+      </div>
+
+      <h3 class="category">Cookies</h3>
+      <div class="grid">
+        <div class="card"><div class="emoji">🍪</div><h4>Chocolate chip cookies (6)</h4><p>Chewy centres with crisp edges.</p><span class="price">Rs 750</span></div>
+        <div class="card"><div class="emoji">🥜</div><h4>Peanut butter cookies (6)</h4><p>Salty, sweet and full of crunch.</p><span class="price">Rs 700</span></div>
+        <!-- EXTRA COOKIE -->
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>About us</h2>
+      <p>Crumb &amp; Co. started in a small Lahore kitchen with one oven and a family recipe for chocolate cake. We still bake in small batches every morning, so everything you pick up was made that day.</p>
+      <a href="about.html">Read our story</a>
+    </section>
+
+    <section id="order">
+      <h2>Place an order</h2>
+      <form id="orderForm" novalidate>
+        <label>Your name <input type="text" id="name"></label>
+        <label>Phone number <input type="tel" id="phone" placeholder="03001234567"></label>
+        <label>Item
+          <select id="item">
+            <option value="chocolate fudge cake">Chocolate fudge cake, Rs 2,400</option>
+            <option value="strawberry cream cake">Strawberry cream cake, Rs 2,200</option>
+            <option value="carrot walnut cake">Carrot walnut cake, Rs 1,950</option>
+            <option value="sourdough loaf">Sourdough loaf, Rs 850</option>
+            <option value="butter croissants">Butter croissants (4), Rs 1,100</option>
+            <option value="garlic baguette">Garlic baguette, Rs 650</option>
+            <option value="chocolate chip cookies">Chocolate chip cookies (6), Rs 750</option>
+            <option value="peanut butter cookies">Peanut butter cookies (6), Rs 700</option>
+          </select>
+        </label>
+        <label>Pickup date <input type="date" id="date"></label>
+        <div class="error" id="error"></div>
+        <button type="submit" class="btn">Place order</button>
+      </form>
+      <div class="thanks" id="thanks" hidden></div>
+    </section>
+  </main>
+
+  <footer>© 2026 Crumb &amp; Co. · Lahore · 0300-1234567</footer>
+
+  <script>
+    const form = document.getElementById("orderForm");
+    const error = document.getElementById("error");
+    const thanks = document.getElementById("thanks");
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.replace(/[\s-]/g, "");
+      const item = document.getElementById("item").value;
+      const date = document.getElementById("date").value;
+      thanks.hidden = true;
+
+      if (!name || !date) {
+        error.textContent = "Please add your name and a pickup date.";
+        return;
+      }
+      if (!/^03\d{9}$/.test(phone)) {
+        error.textContent = "Your phone number needs 11 digits starting with 03, like 03001234567.";
+        return;
+      }
+
+      const [y, m, d] = date.split("-").map(Number);
+      const pickup = new Date(y, m - 1, d);
+      const niceDate = days[pickup.getDay()] + ", " + d + " " + months[m - 1] + " " + y;
+
+      error.textContent = "";
+      thanks.textContent = "Thank you, " + name + ". Your " + item + " will be ready for pickup on " + niceDate + " from 10:00 am. We'll call you on " + phone + " to confirm.";
+      thanks.hidden = false;
+      form.reset();
+    });
+  </script>
+</body>
+</html>
